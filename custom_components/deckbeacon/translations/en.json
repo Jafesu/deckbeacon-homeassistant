@@ -219,6 +219,11 @@
       "now_playing_artwork": {
         "name": "Now playing artwork"
       }
+    },
+    "update": {
+      "agent_update": {
+        "name": "Agent"
+      }
     }
   },
   "options": {
@@ -228,7 +233,14 @@
         "description": "What Home Assistant may do on this device. The device enforces the same limits.",
         "data": {
           "game_management_local": "Allow game management (launch) on the local network",
-          "game_management_remote": "Allow game management (launch) over remote connections"
+          "game_management_remote": "Allow game management (launch) over remote connections",
+          "updates_local": "Allow agent updates on the local network",
+          "updates_remote": "Allow agent updates remotely (HA Cloud / external URL)",
+          "update_channel": "Agent update channel"
+        },
+        "data_description": {
+          "update_channel": "stable: tested releases. beta: early releases. dev: development builds (may be unstable).",
+          "updates_remote": "Updates are signed and verified on the device; each install still needs your approval."
         }
       }
     }

@@ -44,7 +44,10 @@
         "notification_action",
         "storage_low",
         "capability_changed",
-        "device_booted"
+        "device_booted",
+        "agent_update_started",
+        "agent_update_completed",
+        "agent_update_failed"
       ]
     },
     "occurred_at": {

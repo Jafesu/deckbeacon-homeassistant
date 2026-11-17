@@ -15,7 +15,7 @@ from .services import async_register_services
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SELECT, Platform.BUTTON, Platform.IMAGE]
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SELECT, Platform.BUTTON, Platform.IMAGE, Platform.UPDATE]
 
 type DeckBeaconConfigEntry = ConfigEntry[DeviceRuntime]
 

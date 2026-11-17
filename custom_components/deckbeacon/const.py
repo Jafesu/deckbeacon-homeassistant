@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Final
 
 DOMAIN: Final = "deckbeacon"
-INTEGRATION_VERSION: Final = "0.1.0"
+# From manifest.json so the version sent to agents never drifts from releases.
+INTEGRATION_VERSION: Final = json.loads((Path(__file__).parent / "manifest.json").read_text())["version"]
 PROTOCOL_VERSION: Final = 1
 
 PATH_PAIR: Final = "/api/deckbeacon/v1/pair"
@@ -38,6 +41,11 @@ EXPECTED_DROP_GRACE: Final = 5.0
 # Options: permission tiers granted to the device per transport (agent enforces too).
 CONF_GM_LOCAL: Final = "game_management_local"
 CONF_GM_REMOTE: Final = "game_management_remote"
+# Agent updates (ADR-0010): own tier, allowed remotely by default (owner decision).
+CONF_UPD_LOCAL: Final = "updates_local"
+CONF_UPD_REMOTE: Final = "updates_remote"
+CONF_UPDATE_CHANNEL: Final = "update_channel"
+UPDATE_CHANNELS: Final = ("stable", "beta", "dev")
 
 COMMAND_ACK_TIMEOUT: Final = 15.0
 TERMINAL_STATES: Final = frozenset({"dispatched", "confirmed", "rejected", "failed", "expired", "duplicate", "deferred"})

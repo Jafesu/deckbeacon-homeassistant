@@ -57,6 +57,14 @@
               "experimental"
             ]
           }
+        },
+        "update_channel": {
+          "description": "Agent update channel chosen in HA (protocol 1.5, ADR-0010).",
+          "enum": [
+            "stable",
+            "beta",
+            "dev"
+          ]
         }
       }
     }

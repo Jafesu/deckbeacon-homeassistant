@@ -38,6 +38,9 @@ from .const import (
     CONF_GM_LOCAL,
     CONF_GM_REMOTE,
     CONF_METRIC_KEYS,
+    CONF_UPD_LOCAL,
+    CONF_UPD_REMOTE,
+    CONF_UPDATE_CHANNEL,
     DOMAIN,
     EVENT_DEVICE,
     EXPECTED_DROP_GRACE,
@@ -217,6 +220,8 @@ class DeviceRuntime:
         tiers = ["monitoring"]
         if opts.get(CONF_GM_REMOTE if transport == "remote" else CONF_GM_LOCAL, transport != "remote"):
             tiers.append("game_management")
+        if opts.get(CONF_UPD_REMOTE if transport == "remote" else CONF_UPD_LOCAL, True):
+            tiers.append("updates")
         return tiers
 
     def apply_library(self, body: dict[str, Any]) -> None:
@@ -555,7 +560,11 @@ class SessionView(_DeviceView):
                     "integration_version": INTEGRATION_VERSION,
                     "heartbeat_s": HEARTBEAT_SECONDS,
                     "last_received_event_seq": runtime.last_event_seq,
-                    "policy": {"transport": hello["session"]["transport"], "granted": runtime.granted(hello["session"]["transport"])},
+                    "policy": {
+                        "transport": hello["session"]["transport"],
+                        "granted": runtime.granted(hello["session"]["transport"]),
+                        "update_channel": runtime.entry.options.get(CONF_UPDATE_CHANNEL, "stable"),
+                    },
                 },
             )
             while True:

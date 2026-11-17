@@ -23,9 +23,13 @@ from .const import (
     CONF_METRIC_KEYS,
     CONF_MODEL,
     CONF_NAME,
+    CONF_UPD_LOCAL,
+    CONF_UPD_REMOTE,
+    CONF_UPDATE_CHANNEL,
     CONF_VENDOR,
     DOMAIN,
     PAIRING_WINDOW_SECONDS,
+    UPDATE_CHANNELS,
 )
 from .hub import PairingAborted, PairingWindow, async_get_hub
 
@@ -181,6 +185,9 @@ class DeckBeaconOptionsFlow(OptionsFlow):
                 {
                     vol.Required(CONF_GM_LOCAL, default=opts.get(CONF_GM_LOCAL, True)): bool,
                     vol.Required(CONF_GM_REMOTE, default=opts.get(CONF_GM_REMOTE, False)): bool,
+                    vol.Required(CONF_UPD_LOCAL, default=opts.get(CONF_UPD_LOCAL, True)): bool,
+                    vol.Required(CONF_UPD_REMOTE, default=opts.get(CONF_UPD_REMOTE, True)): bool,
+                    vol.Required(CONF_UPDATE_CHANNEL, default=opts.get(CONF_UPDATE_CHANNEL, "stable")): vol.In(list(UPDATE_CHANNELS)),
                 }
             ),
         )
