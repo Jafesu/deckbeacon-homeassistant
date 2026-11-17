@@ -13,6 +13,7 @@
     "body"
   ],
   "additionalProperties": false,
+  "x-receiver": "closed",
   "properties": {
     "v": {
       "const": 1

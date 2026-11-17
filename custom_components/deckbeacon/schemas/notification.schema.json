@@ -19,7 +19,7 @@
     "actions": {
       "type": "array", "maxItems": 3,
       "items": {
-        "type": "object", "required": ["action_id", "label"], "additionalProperties": false,
+        "type": "object", "required": ["action_id", "label"], "additionalProperties": false, "x-receiver": "closed",
         "properties": {
           "action_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "label": {"type": "string", "minLength": 1, "maxLength": 32},

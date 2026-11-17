@@ -25,12 +25,29 @@ class ProtocolError(Exception):
     """Malformed, undecryptable or schema-invalid traffic. Fatal for the connection."""
 
 
-def load_validator() -> Draft202012Validator:
-    """Build the envelope validator. Blocking I/O: call in an executor."""
+def _open_objects(node: Any) -> None:
+    """Drop `additionalProperties: false` (except objects marked
+    `"x-receiver": "closed"`), so received messages may carry fields a newer
+    minor version added (COMPATIBILITY.md: lenient receivers)."""
+    if isinstance(node, dict):
+        if node.get("additionalProperties") is False and node.get("x-receiver") != "closed":
+            del node["additionalProperties"]
+        for child in node.values():
+            _open_objects(child)
+    elif isinstance(node, list):
+        for child in node:
+            _open_objects(child)
+
+
+def load_validator(receiver: bool = False) -> Draft202012Validator:
+    """Build the envelope validator: strict for sending, or (receiver=True)
+    lenient about unknown fields for receiving. Blocking I/O: call in an executor."""
     resources = []
     envelope = None
     for path in sorted(_SCHEMA_DIR.glob("*.schema.json")):
         schema = json.loads(path.read_text())
+        if receiver:
+            _open_objects(schema)
         resources.append((schema["$id"], Resource.from_contents(schema)))
         if path.name == "envelope.schema.json":
             envelope = schema
@@ -54,12 +71,14 @@ def now_iso() -> str:
 
 
 class Channel:
-    """One encrypted, schema-validated message channel."""
+    """One encrypted, schema-validated message channel: strict for what we
+    send, lenient about unknown fields in what we receive."""
 
-    def __init__(self, ws: web.WebSocketResponse, session: noise.Session, validator: Draft202012Validator):
+    def __init__(self, ws: web.WebSocketResponse, session: noise.Session, validator: Draft202012Validator, receiver: Draft202012Validator | None = None):
         self.ws = ws
         self.session = session
         self._validator = validator
+        self._receiver = receiver or validator
         self._seq = 0
         self._lock = asyncio.Lock()
 
@@ -90,7 +109,7 @@ class Channel:
             raise ProtocolError(f"undecodable message: {err}") from err
         if not isinstance(env, dict):
             raise ProtocolError("envelope is not an object")
-        errors = list(self._validator.iter_errors(env))
+        errors = list(self._receiver.iter_errors(env))
         if errors:
             raise InvalidMessage(env, errors[0].message)
         return env

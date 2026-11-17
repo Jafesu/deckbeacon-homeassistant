@@ -315,6 +315,7 @@ class Hub:
         self.hass = hass
         self.static: noise.KeyPair | None = None
         self.validator: Draft202012Validator | None = None
+        self.receiver: Draft202012Validator | None = None
         self.runtimes: dict[str, DeviceRuntime] = {}  # entry_id -> runtime
         self.windows: list[PairingWindow] = []
         self.preauth_by_ip: dict[str, int] = defaultdict(int)
@@ -329,6 +330,7 @@ class Hub:
             self.static = noise.KeyPair.generate()
             await self._key_store.async_save({"static_private": self.static.private.hex()})
         self.validator = await self.hass.async_add_executor_job(load_validator)
+        self.receiver = await self.hass.async_add_executor_job(load_validator, True)
         self.hass.http.register_view(PairView(self))
         self.hass.http.register_view(SessionView(self))
         self.hass.http.register_view(ArtworkView(self))
@@ -459,7 +461,7 @@ class PairView(_DeviceView):
             return web.Response(status=400)
         try:
             session = await responder_handshake(ws, "XX", noise.PROLOGUE_PAIR, hub.static, HANDSHAKE_TIMEOUT)
-            ch = Channel(ws, session, hub.validator)
+            ch = Channel(ws, session, hub.validator, hub.receiver)
             req = await ch.recv(HELLO_TIMEOUT)
             if req["type"] != "pair_request":
                 raise ProtocolError("expected pair_request")
@@ -534,7 +536,7 @@ class SessionView(_DeviceView):
                 return web.Response(status=400)
             try:
                 session = await responder_handshake(ws, "IK", noise.PROLOGUE_SESSION, hub.static, HANDSHAKE_TIMEOUT)
-                ch = Channel(ws, session, hub.validator)
+                ch = Channel(ws, session, hub.validator, hub.receiver)
                 hello = await ch.recv(HELLO_TIMEOUT)
                 if hello["type"] != "hello":
                     raise ProtocolError("expected hello")
@@ -591,7 +593,7 @@ class SessionView(_DeviceView):
                     msg = await ch.recv(timeout)
                 except InvalidMessage as err:
                     # Lenient receiver (COMPATIBILITY.md).
-                    seq = _unknown_event_seq(self.hub.validator, err.env)
+                    seq = _unknown_event_seq(self.hub.receiver, err.env)
                     if seq is not None:
                         # Event type from a newer agent: acknowledge so it is not resent, skip it.
                         _LOGGER.info("ignoring unknown event type %r from %s", err.env["body"].get("event_type"), runtime.entry.title)

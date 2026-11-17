@@ -14,4 +14,4 @@ Home Assistant integration for **DeckBeacon**: local-first monitoring and manage
 ## Install
 Marketplace → **Add from link** → `https://github.com/Jafesu/deckbeacon-homeassistant` (type: Integration). Restart Home Assistant, then pair the device from the agent with `deckbeacon pair`.
 
-Version 0.4.0, built from monorepo commit `a96fdba`.
+Version 0.4.1, built from monorepo commit `a9aac55`.
