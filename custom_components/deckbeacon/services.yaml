@@ -1,3 +1,15 @@
+close_game:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: deckbeacon
+    force:
+      default: false
+      selector:
+        boolean:
 launch_game:
   fields:
     device_id:

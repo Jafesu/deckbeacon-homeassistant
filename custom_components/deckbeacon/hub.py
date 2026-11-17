@@ -237,7 +237,7 @@ class DeviceRuntime:
         if fut is not None and not fut.done() and body["state"] in TERMINAL_STATES:
             fut.set_result(body)
 
-    async def async_send_command(self, name: str, args: dict[str, Any], ttl_s: int = 60) -> dict[str, Any]:
+    async def async_send_command(self, name: str, args: dict[str, Any], ttl_s: int = 60, *, confirmed: bool = False) -> dict[str, Any]:
         """Send a command and wait for its first decisive state (dispatched/confirmed/rejected/...)."""
         ch = self.channel
         if ch is None:
@@ -246,7 +246,10 @@ class DeviceRuntime:
         fut: asyncio.Future = asyncio.get_running_loop().create_future()
         self._pending[command_id] = fut
         try:
-            await ch.send("command", {"command_id": command_id, "name": name, "args": args, "ttl_s": ttl_s, "issued_at": now_iso()})
+            body = {"command_id": command_id, "name": name, "args": args, "ttl_s": ttl_s, "issued_at": now_iso()}
+            if confirmed:  # the user explicitly confirmed a sensitive action in HA
+                body["confirmed_by_user"] = True
+            await ch.send("command", body)
             async with asyncio.timeout(COMMAND_ACK_TIMEOUT):
                 return await fut
         finally:

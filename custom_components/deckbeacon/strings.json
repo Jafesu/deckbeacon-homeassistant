@@ -207,6 +207,12 @@
     "button": {
       "launch_game": {
         "name": "Launch game"
+      },
+      "close_game": {
+        "name": "Close game"
+      },
+      "force_close_game": {
+        "name": "Force close game"
       }
     },
     "image": {
@@ -277,6 +283,20 @@
         "device_id": {
           "name": "Device",
           "description": "The SteamOS device."
+        }
+      }
+    },
+    "close_game": {
+      "name": "Close game",
+      "description": "Closes the game running on the device. Graceful by default; force close ends it immediately without letting it save.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The DeckBeacon device."
+        },
+        "force": {
+          "name": "Force close",
+          "description": "Kill the game immediately (unsaved progress is lost). Use when a normal close did not work."
         }
       }
     }
