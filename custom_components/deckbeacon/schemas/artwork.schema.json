@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/artwork.schema.json",
+  "title": "artwork (agent -> HA): one chunk of a re-encoded game image (protocol 1.4, ADR-0009)",
+  "description": "Answers get_artwork. Images are decoded and re-encoded by the agent (never raw file bytes). Chunks of at most 32 KiB binary keep each Noise message under its 65,519-byte plaintext limit. HA reassembles by (command_id, seq) and verifies sha256 over the whole image.",
+  "type": "object",
+  "required": [
+    "command_id",
+    "app_id",
+    "kind",
+    "mime",
+    "width",
+    "height",
+    "seq",
+    "total",
+    "sha256",
+    "data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "$ref": "common.schema.json#/$defs/ulid"
+    },
+    "app_id": {
+      "$ref": "common.schema.json#/$defs/app_id"
+    },
+    "kind": {
+      "enum": [
+        "capsule",
+        "header",
+        "hero",
+        "logo"
+      ]
+    },
+    "mime": {
+      "enum": [
+        "image/jpeg",
+        "image/png"
+      ]
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 15
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 16
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "data": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "maxLength": 43692
+    }
+  }
+}

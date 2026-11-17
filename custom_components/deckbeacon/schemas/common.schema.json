@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/common.schema.json",
+  "title": "DeckBeacon protocol v1 \u2014 shared definitions",
+  "$defs": {
+    "ulid": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "device_id": {
+      "description": "base32(SHA-256(ed25519_pub))[:26], lowercase",
+      "type": "string",
+      "pattern": "^[a-z2-7]{26}$"
+    },
+    "app_id": {
+      "description": "Steam App ID",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$"
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)*$",
+      "maxLength": 96
+    },
+    "short_text": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "capability_status": {
+      "enum": [
+        "available",
+        "unsupported",
+        "disabled",
+        "unavailable",
+        "unknown"
+      ]
+    },
+    "confidence": {
+      "enum": [
+        "confirmed",
+        "high",
+        "heuristic",
+        "low"
+      ]
+    },
+    "transport": {
+      "enum": [
+        "local",
+        "remote"
+      ]
+    },
+    "error_code": {
+      "enum": [
+        "unsupported",
+        "disabled",
+        "unavailable",
+        "permission_denied",
+        "invalid_args",
+        "expired",
+        "duplicate",
+        "busy_in_game",
+        "confirmation_required",
+        "rate_limited",
+        "unsupported_type",
+        "protocol_version",
+        "internal"
+      ]
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/error_code"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "object",
+          "maxProperties": 32
+        }
+      }
+    },
+    "counter": {
+      "description": "Non-negative integer that must stay exactly representable as an IEEE-754 double (|n| <= 2^53-1) so every JSON decoder agrees on its value.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 512,
+      "pattern": "^(https?|wss?)://[^\\s/?#]+(/[^\\s]*)?$"
+    }
+  }
+}

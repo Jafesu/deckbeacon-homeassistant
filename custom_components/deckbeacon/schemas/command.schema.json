@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/command.schema.json",
+  "title": "command (HA → agent)",
+  "description": "Expiry is relative (ttl_s from agent receipt) to avoid clock-skew issues; issued_at is informational.",
+  "type": "object",
+  "required": ["command_id", "name", "args", "ttl_s", "issued_at"],
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {"$ref": "common.schema.json#/$defs/ulid"},
+    "name": {
+      "enum": ["launch_game", "close_game", "pause_downloads", "resume_downloads", "install_game", "update_game",
+               "move_game", "uninstall_game", "set_compatibility_tool", "refresh_library", "list_games", "get_game",
+               "dismiss_notification", "get_notification_status", "suspend", "reboot", "shutdown",
+               "set_volume", "set_brightness", "request_diagnostics", "approve_agent_update", "get_artwork"]
+    },
+    "args": {"type": "object", "maxProperties": 16},
+    "ttl_s": {"type": "integer", "minimum": 1, "maximum": 86400},
+    "issued_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "confirmed_by_user": {"description": "HA-side confirmation was obtained for a sensitive command", "type": "boolean"}
+  },
+  "allOf": [
+    {"if": {"properties": {"name": {"enum": ["launch_game", "install_game", "update_game", "uninstall_game", "get_game"]}}},
+     "then": {"properties": {"args": {"required": ["app_id"], "additionalProperties": false,
+                                      "properties": {"app_id": {"$ref": "common.schema.json#/$defs/app_id"}}}}}},
+    {"if": {"properties": {"name": {"const": "get_artwork"}}},
+     "then": {"properties": {"args": {"required": ["app_id", "kind"], "additionalProperties": false,
+                                      "properties": {"app_id": {"$ref": "common.schema.json#/$defs/app_id"},
+                                                     "kind": {"enum": ["capsule", "header", "hero", "logo"]}}}}}},
+    {"if": {"properties": {"name": {"const": "close_game"}}},
+     "then": {"properties": {"args": {"required": ["app_id"], "additionalProperties": false,
+                                      "properties": {"app_id": {"$ref": "common.schema.json#/$defs/app_id"}, "force": {"type": "boolean"}}}}}},
+    {"if": {"properties": {"name": {"const": "move_game"}}},
+     "then": {"properties": {"args": {"required": ["app_id", "target_library_id"], "additionalProperties": false,
+                                      "properties": {"app_id": {"$ref": "common.schema.json#/$defs/app_id"},
+                                                     "target_library_id": {"$ref": "common.schema.json#/$defs/short_text"}}}}}},
+    {"if": {"properties": {"name": {"const": "set_compatibility_tool"}}},
+     "then": {"properties": {"args": {"required": ["app_id", "tool"], "additionalProperties": false,
+                                      "properties": {"app_id": {"$ref": "common.schema.json#/$defs/app_id"},
+                                                     "tool": {"type": ["string", "null"], "maxLength": 128}}}}}},
+    {"if": {"properties": {"name": {"enum": ["set_volume", "set_brightness"]}}},
+     "then": {"properties": {"args": {"required": ["percent"], "additionalProperties": false,
+                                      "properties": {"percent": {"type": "integer", "minimum": 0, "maximum": 100}}}}}},
+    {"if": {"properties": {"name": {"enum": ["suspend", "reboot", "shutdown"]}}},
+     "then": {"properties": {"args": {"additionalProperties": false,
+                                      "properties": {"defer_if_in_game": {"type": "boolean"}}}}}},
+    {"if": {"properties": {"name": {"enum": ["dismiss_notification", "get_notification_status"]}}},
+     "then": {"properties": {"args": {"required": ["notification_id"], "additionalProperties": false,
+                                      "properties": {"notification_id": {"$ref": "common.schema.json#/$defs/ulid"}}}}}}
+  ]
+}

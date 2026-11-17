@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/ping.schema.json",
+  "title": "ping / pong (either direction): application heartbeat",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "ref_id": {"$ref": "common.schema.json#/$defs/ulid"}
+  }
+}

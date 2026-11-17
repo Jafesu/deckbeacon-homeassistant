@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/library.schema.json",
+  "title": "library (agent -> HA): installed library snapshot, paged (protocol 1.2; kind \"shortcut\" since 1.3)",
+  "description": "Sent after welcome and whenever the library changes. A snapshot is complete when all pages of one revision have arrived. Contains no account data (LastOwner etc. are never read).",
+  "type": "object",
+  "required": [
+    "revision",
+    "page",
+    "pages",
+    "games"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "$ref": "common.schema.json#/$defs/counter"
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "pages": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "games": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": [
+          "app_id",
+          "name",
+          "kind",
+          "status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "app_id": {
+            "$ref": "common.schema.json#/$defs/app_id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "kind": {
+            "enum": [
+              "game",
+              "tool",
+              "shortcut"
+            ],
+            "description": "\"shortcut\" = non-Steam game from shortcuts.vdf (ADR-0008); app_id is its unsigned 32-bit id. Shortcuts carry no size_on_disk/library."
+          },
+          "status": {
+            "enum": [
+              "installed",
+              "update_required",
+              "updating",
+              "downloading",
+              "paused",
+              "installing",
+              "verifying",
+              "uninstalling",
+              "files_missing",
+              "unknown"
+            ]
+          },
+          "size_on_disk": {
+            "$ref": "common.schema.json#/$defs/counter"
+          },
+          "build_id": {
+            "$ref": "common.schema.json#/$defs/short_text"
+          },
+          "last_played": {
+            "$ref": "common.schema.json#/$defs/timestamp"
+          },
+          "library": {
+            "$ref": "common.schema.json#/$defs/short_text"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/hello.schema.json",
+  "title": "hello (agent \u2192 HA): first message after the channel handshake",
+  "type": "object",
+  "required": [
+    "agent_version",
+    "protocol",
+    "device",
+    "boot_id",
+    "session"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "agent_version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "protocol": {
+      "type": "object",
+      "required": [
+        "min",
+        "max"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "required": [
+        "device_id",
+        "os",
+        "arch"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "device_id": {
+          "$ref": "common.schema.json#/$defs/device_id"
+        },
+        "model": {
+          "$ref": "common.schema.json#/$defs/short_text"
+        },
+        "vendor": {
+          "$ref": "common.schema.json#/$defs/short_text"
+        },
+        "os": {
+          "type": "object",
+          "required": [
+            "id",
+            "version_id"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "steamos"
+            },
+            "version_id": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            },
+            "build_id": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            },
+            "variant_id": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            },
+            "channel": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            }
+          }
+        },
+        "arch": {
+          "enum": [
+            "x86_64",
+            "aarch64"
+          ]
+        }
+      }
+    },
+    "boot_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "session": {
+      "type": "object",
+      "required": [
+        "mode",
+        "transport"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "gaming",
+            "desktop",
+            "none",
+            "unknown"
+          ]
+        },
+        "transport": {
+          "$ref": "common.schema.json#/$defs/transport"
+        },
+        "resume_after_event_seq": {
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/counter"
+            }
+          ],
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

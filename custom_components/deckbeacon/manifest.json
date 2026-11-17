@@ -1,0 +1,20 @@
+{
+  "domain": "deckbeacon",
+  "name": "DeckBeacon",
+  "codeowners": [
+    "@Jafesu"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "http",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/Jafesu/DeckBeacon",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Jafesu/DeckBeacon/issues",
+  "requirements": [
+    "jsonschema>=4.23.0"
+  ],
+  "version": "0.1.0"
+}

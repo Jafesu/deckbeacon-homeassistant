@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/event.schema.json",
+  "title": "event (agent \u2192 HA): durable, deduplicated device event",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_seq",
+    "event_type",
+    "occurred_at",
+    "live",
+    "data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "$ref": "common.schema.json#/$defs/ulid"
+    },
+    "event_seq": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/counter"
+        }
+      ],
+      "minimum": 1
+    },
+    "event_type": {
+      "enum": [
+        "game_started",
+        "game_stopped",
+        "session_started",
+        "session_ended",
+        "download_started",
+        "download_completed",
+        "update_available",
+        "battery_low",
+        "docked",
+        "undocked",
+        "connection_changed",
+        "device_resumed",
+        "device_suspending",
+        "device_shutting_down",
+        "agent_update_available",
+        "notification_action",
+        "storage_low",
+        "capability_changed",
+        "device_booted"
+      ]
+    },
+    "occurred_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "live": {
+      "description": "false = backfilled after reconnect; HA must not fire time-sensitive automations for it by default",
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "maxProperties": 64
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "game_started",
+              "game_stopped",
+              "download_started",
+              "download_completed",
+              "update_available"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "required": [
+              "app_id"
+            ],
+            "properties": {
+              "app_id": {
+                "$ref": "common.schema.json#/$defs/app_id"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

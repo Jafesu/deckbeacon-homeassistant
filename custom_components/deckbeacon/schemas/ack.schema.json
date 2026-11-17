@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/ack.schema.json",
+  "title": "ack (either direction): receipt of a message by envelope id; event acks also carry event_seq",
+  "type": "object",
+  "required": [
+    "ref_id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "ref_id": {
+      "$ref": "common.schema.json#/$defs/ulid"
+    },
+    "event_seq": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/counter"
+        }
+      ],
+      "minimum": 1
+    }
+  }
+}

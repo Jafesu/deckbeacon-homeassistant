@@ -1,0 +1,284 @@
+{
+  "config": {
+    "step": {
+      "confirm_code": {
+        "title": "Confirm pairing code",
+        "description": "**{name}** ({model}) wants to pair.\n\nCode: **{code}**\n\nCheck that the device shows exactly this code. Accept only if it matches; then also confirm on the device.",
+        "menu_options": {
+          "accept": "The code matches: pair",
+          "reject": "The code does not match: cancel"
+        }
+      }
+    },
+    "progress": {
+      "wait_for_device": "Pairing window open for 10 minutes. On your SteamOS device run:\n\n`{command}`",
+      "wait_for_device_confirm": "Now confirm the same code on the device."
+    },
+    "abort": {
+      "already_configured": "This device is already paired.",
+      "code_rejected": "Pairing cancelled: the code did not match.",
+      "device_rejected": "Pairing cancelled on the device.",
+      "timeout": "The pairing window expired. Start again.",
+      "window_closed": "Pairing was interrupted. Start again.",
+      "already_paired": "This device is already paired."
+    }
+  },
+  "issues": {
+    "possible_clone": {
+      "title": "{name}: possible cloned device identity",
+      "description": "Two sessions with the same device identity keep replacing each other. If you restored a backup of this device onto another machine, remove one of them and pair it again."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "connection": {
+        "name": "Connection",
+        "state": {
+          "local": "Local",
+          "remote": "Remote",
+          "offline": "Offline"
+        }
+      },
+      "last_seen": {
+        "name": "Last seen"
+      },
+      "cpu_usage": {
+        "name": "CPU usage"
+      },
+      "memory_used": {
+        "name": "Memory used"
+      },
+      "memory_total": {
+        "name": "Memory total"
+      },
+      "storage_home_used": {
+        "name": "Internal storage used"
+      },
+      "storage_home_free": {
+        "name": "Internal storage free"
+      },
+      "storage_sd_used": {
+        "name": "SD card used"
+      },
+      "storage_sd_free": {
+        "name": "SD card free"
+      },
+      "boot_time": {
+        "name": "Last boot"
+      },
+      "battery_power": {
+        "name": "Battery power"
+      },
+      "battery_status": {
+        "name": "Battery status",
+        "state": {
+          "charging": "Charging",
+          "discharging": "Discharging",
+          "full": "Full",
+          "not_charging": "Not charging",
+          "unknown": "Unknown"
+        }
+      },
+      "cpu_temp": {
+        "name": "CPU temperature"
+      },
+      "gpu_temp": {
+        "name": "GPU temperature"
+      },
+      "fan": {
+        "name": "Fan speed"
+      },
+      "gpu_busy": {
+        "name": "GPU usage"
+      },
+      "session_mode": {
+        "name": "Session mode",
+        "state": {
+          "gaming": "Gaming",
+          "desktop": "Desktop",
+          "none": "None",
+          "unknown": "Unknown"
+        }
+      },
+      "power_state": {
+        "name": "Power state",
+        "state": {
+          "on": "On",
+          "suspended": "Suspended",
+          "shutting_down": "Shutting down",
+          "unknown": "Unknown",
+          "rebooting": "Rebooting",
+          "off": "Off"
+        }
+      },
+      "current_game": {
+        "name": "Current game"
+      },
+      "current_app_id": {
+        "name": "Current app ID"
+      },
+      "session_started": {
+        "name": "Session started"
+      },
+      "session_duration": {
+        "name": "Session duration"
+      },
+      "installed_games": {
+        "name": "Installed games"
+      },
+      "updates_available": {
+        "name": "Updates available"
+      },
+      "download_status": {
+        "name": "Download status",
+        "state": {
+          "idle": "Idle",
+          "downloading": "Downloading",
+          "paused": "Paused",
+          "installing": "Installing",
+          "updating": "Updating",
+          "verifying": "Verifying",
+          "update_required": "Update required",
+          "uninstalling": "Uninstalling",
+          "files_missing": "Files missing",
+          "installed": "Installed",
+          "unknown": "Unknown"
+        }
+      },
+      "download_name": {
+        "name": "Downloading"
+      },
+      "download_progress": {
+        "name": "Download progress"
+      },
+      "download_rate": {
+        "name": "Download speed"
+      },
+      "download_eta": {
+        "name": "Download time remaining"
+      },
+      "shortcuts": {
+        "name": "Non-Steam shortcuts"
+      },
+      "steam_ui_mode": {
+        "name": "Steam UI mode",
+        "state": {
+          "gamepad": "Gamepad UI",
+          "desktop": "Desktop UI",
+          "unknown": "Unknown"
+        }
+      },
+      "session_type": {
+        "name": "Session",
+        "state": {
+          "gaming": "Gaming Mode",
+          "desktop": "Desktop Mode"
+        }
+      },
+      "activity_details": {
+        "name": "Activity details"
+      },
+      "activity_state": {
+        "name": "Activity state"
+      },
+      "activity_party_size": {
+        "name": "Party size"
+      },
+      "activity_party_max": {
+        "name": "Party max"
+      },
+      "activity_started": {
+        "name": "Activity started"
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "Connected"
+      },
+      "ac_power": {
+        "name": "AC power"
+      }
+    },
+    "select": {
+      "game_to_launch": {
+        "name": "Game to launch"
+      }
+    },
+    "button": {
+      "launch_game": {
+        "name": "Launch game"
+      }
+    },
+    "image": {
+      "now_playing_artwork": {
+        "name": "Now playing artwork"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "DeckBeacon permissions",
+        "description": "What Home Assistant may do on this device. The device enforces the same limits.",
+        "data": {
+          "game_management_local": "Allow game management (launch) on the local network",
+          "game_management_remote": "Allow game management (launch) over remote connections"
+        }
+      }
+    }
+  },
+  "services": {
+    "launch_game": {
+      "name": "Launch game",
+      "description": "Ask Steam on the device to start an installed game.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The SteamOS device."
+        },
+        "app_id": {
+          "name": "App ID",
+          "description": "Steam App ID of an installed game."
+        }
+      }
+    },
+    "list_games": {
+      "name": "List games",
+      "description": "Return the installed library.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The SteamOS device."
+        },
+        "include_tools": {
+          "name": "Include tools",
+          "description": "Also list Proton and runtimes."
+        }
+      }
+    },
+    "get_game": {
+      "name": "Get game",
+      "description": "Return one library entry.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The SteamOS device."
+        },
+        "app_id": {
+          "name": "App ID",
+          "description": "Steam App ID."
+        }
+      }
+    },
+    "refresh_library": {
+      "name": "Refresh library",
+      "description": "Rescan the Steam library now.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The SteamOS device."
+        }
+      }
+    }
+  }
+}

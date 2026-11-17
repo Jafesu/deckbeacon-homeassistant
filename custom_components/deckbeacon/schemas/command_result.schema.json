@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/command_result.schema.json",
+  "title": "command_result (agent → HA): one per state transition",
+  "type": "object",
+  "required": ["command_id", "state"],
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {"$ref": "common.schema.json#/$defs/ulid"},
+    "state": {"enum": ["accepted", "dispatched", "confirmed", "deferred", "rejected", "failed", "expired", "duplicate"]},
+    "error": {"$ref": "common.schema.json#/$defs/error"},
+    "result": {"type": "object", "maxProperties": 64}
+  },
+  "allOf": [
+    {"if": {"properties": {"state": {"enum": ["rejected", "failed", "expired"]}}}, "then": {"required": ["error"]}}
+  ]
+}

@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/envelope.schema.json",
+  "title": "DeckBeacon protocol v1 envelope",
+  "description": "Every message on the (Noise-encrypted) device channel. 'seq' is per-sender, per-session, strictly increasing from 1. 'ts' is the sender wall clock and is informational only.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "id",
+    "ts",
+    "seq",
+    "body"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "enum": [
+        "hello",
+        "welcome",
+        "capabilities",
+        "telemetry",
+        "event",
+        "command",
+        "command_result",
+        "notification",
+        "notification_status",
+        "ack",
+        "ping",
+        "pong",
+        "error",
+        "pair_request",
+        "pair_confirm",
+        "pair_complete",
+        "pair_abort",
+        "library",
+        "artwork"
+      ]
+    },
+    "id": {
+      "$ref": "common.schema.json#/$defs/ulid"
+    },
+    "ts": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "seq": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/counter"
+        }
+      ],
+      "minimum": 1
+    },
+    "body": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "hello"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "hello.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "welcome"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "welcome.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "capabilities"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "capabilities.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "telemetry"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "telemetry.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "event"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "event.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "command"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "command.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "command_result"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "command_result.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "notification"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "notification.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "notification_status"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "notification_status.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ack"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "ack.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "ping",
+              "pong"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "ping.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "error"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "error.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "pair_request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "pair_request.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "pair_confirm"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "pair_confirm.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "pair_complete"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "pair_complete.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "pair_abort"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "pair_abort.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "library"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "library.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "artwork"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "$ref": "artwork.schema.json"
+          }
+        }
+      }
+    }
+  ]
+}

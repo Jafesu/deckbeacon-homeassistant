@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/notification_status.schema.json",
+  "title": "notification_status (agent → HA)",
+  "type": "object",
+  "required": ["notification_id", "state", "at"],
+  "additionalProperties": false,
+  "properties": {
+    "notification_id": {"$ref": "common.schema.json#/$defs/ulid"},
+    "state": {"enum": ["accepted", "delivered", "displayed", "dismissed", "actioned", "expired", "failed", "suppressed"]},
+    "at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "action_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+    "surface": {"enum": ["decky_toast", "decky_inbox", "desktop", "none"]},
+    "reason": {"type": "string", "maxLength": 256}
+  },
+  "allOf": [
+    {"if": {"properties": {"state": {"const": "actioned"}}}, "then": {"required": ["action_id"]}}
+  ]
+}

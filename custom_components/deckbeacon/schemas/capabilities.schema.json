@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/capabilities.schema.json",
+  "title": "capabilities (agent → HA): full capability snapshot (sent after welcome and on any change)",
+  "type": "object",
+  "required": ["capabilities"],
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "type": "array", "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/key"},
+          "status": {"$ref": "common.schema.json#/$defs/capability_status"},
+          "tier": {"enum": ["files", "steam_url", "decky_steamclient", "system", "ipc", "none"]},
+          "experimental": {"type": "boolean"},
+          "source": {"$ref": "common.schema.json#/$defs/short_text"},
+          "privilege": {"enum": ["none", "user", "polkit_active_session", "decky"]},
+          "reason": {"type": "string", "maxLength": 512},
+          "since": {"$ref": "common.schema.json#/$defs/timestamp"}
+        }
+      }
+    }
+  }
+}

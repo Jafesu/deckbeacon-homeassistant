@@ -1,0 +1,51 @@
+launch_game:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: deckbeacon
+    app_id:
+      required: true
+      example: 413150
+      selector:
+        number:
+          min: 1
+          max: 4294967295
+          mode: box
+list_games:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: deckbeacon
+    include_tools:
+      default: false
+      selector:
+        boolean:
+get_game:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: deckbeacon
+    app_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 4294967295
+          mode: box
+refresh_library:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: deckbeacon

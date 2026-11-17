@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/pair_request.schema.json",
+  "title": "pair_request (agent \u2192 HA): first transport message after the pairing XX handshake",
+  "type": "object",
+  "required": [
+    "agent_version",
+    "protocol",
+    "device",
+    "name"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "agent_version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "protocol": {
+      "type": "object",
+      "required": [
+        "min",
+        "max"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "required": [
+        "device_id",
+        "os",
+        "arch"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "device_id": {
+          "$ref": "common.schema.json#/$defs/device_id"
+        },
+        "model": {
+          "$ref": "common.schema.json#/$defs/short_text"
+        },
+        "vendor": {
+          "$ref": "common.schema.json#/$defs/short_text"
+        },
+        "os": {
+          "type": "object",
+          "required": [
+            "id",
+            "version_id"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "steamos"
+            },
+            "version_id": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            },
+            "build_id": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            },
+            "variant_id": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            },
+            "channel": {
+              "$ref": "common.schema.json#/$defs/short_text"
+            }
+          }
+        },
+        "arch": {
+          "enum": [
+            "x86_64",
+            "aarch64"
+          ]
+        }
+      }
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Suggested device name (hostname)"
+    }
+  }
+}

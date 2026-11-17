@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/pair_confirm.schema.json",
+  "title": "pair_confirm (either direction): the human on this side confirmed (or rejected) the SAS",
+  "type": "object",
+  "required": [
+    "accepted"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "accepted": {
+      "type": "boolean"
+    }
+  }
+}

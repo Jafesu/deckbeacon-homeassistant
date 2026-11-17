@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/notification.schema.json",
+  "title": "notification (HA → agent): spec 07 envelope. Actions are opaque IDs; they never encode HA service calls.",
+  "type": "object",
+  "required": ["notification_id", "title", "message", "priority", "category", "require_ack", "source", "ttl_s"],
+  "additionalProperties": false,
+  "properties": {
+    "notification_id": {"$ref": "common.schema.json#/$defs/ulid"},
+    "title": {"type": "string", "minLength": 1, "maxLength": 120},
+    "message": {"type": "string", "maxLength": 1000},
+    "icon": {"enum": ["info", "warning", "alert", "home", "security", "game", "download", "battery"]},
+    "priority": {"enum": ["low", "normal", "high", "critical"]},
+    "category": {"$ref": "common.schema.json#/$defs/key"},
+    "tag": {"$ref": "common.schema.json#/$defs/short_text"},
+    "ttl_s": {"type": "integer", "minimum": 1, "maximum": 604800},
+    "require_ack": {"type": "boolean"},
+    "source": {"$ref": "common.schema.json#/$defs/short_text"},
+    "actions": {
+      "type": "array", "maxItems": 3,
+      "items": {
+        "type": "object", "required": ["action_id", "label"], "additionalProperties": false,
+        "properties": {
+          "action_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+          "label": {"type": "string", "minLength": 1, "maxLength": 32},
+          "destructive": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

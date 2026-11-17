@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/pair_complete.schema.json",
+  "title": "pair_complete (HA \u2192 agent): both sides confirmed; trust is established",
+  "description": "The HA static key is the one authenticated in the XX handshake and is not repeated here.",
+  "type": "object",
+  "required": [
+    "instance_name",
+    "connection_profile"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "instance_name": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "connection_profile": {
+      "type": "object",
+      "required": [
+        "urls"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "urls": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "url": {
+                "$ref": "common.schema.json#/$defs/url"
+              },
+              "kind": {
+                "enum": [
+                  "internal",
+                  "external",
+                  "cloud",
+                  "manual"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

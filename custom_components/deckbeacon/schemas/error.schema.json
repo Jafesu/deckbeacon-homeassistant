@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/error.schema.json",
+  "title": "error (either direction): protocol-level error, optionally about a specific message",
+  "type": "object",
+  "required": ["error"],
+  "additionalProperties": false,
+  "properties": {
+    "ref_id": {"$ref": "common.schema.json#/$defs/ulid"},
+    "error": {"$ref": "common.schema.json#/$defs/error"},
+    "fatal": {"type": "boolean"}
+  }
+}

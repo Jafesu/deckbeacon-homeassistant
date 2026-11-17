@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.deckbeacon.invalid/protocol/v1/welcome.schema.json",
+  "title": "welcome (HA \u2192 agent): session accepted, negotiated parameters and effective policy",
+  "type": "object",
+  "required": [
+    "protocol",
+    "integration_version",
+    "heartbeat_s",
+    "policy"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "protocol": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "integration_version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "heartbeat_s": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 300
+    },
+    "last_received_event_seq": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/counter"
+        }
+      ],
+      "minimum": 0
+    },
+    "policy": {
+      "description": "Permission tiers granted for this transport. The agent enforces the intersection with its local policy.",
+      "type": "object",
+      "required": [
+        "transport",
+        "granted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "transport": {
+          "$ref": "common.schema.json#/$defs/transport"
+        },
+        "granted": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "monitoring",
+              "standard_controls",
+              "game_management",
+              "notifications",
+              "power_admin",
+              "updates",
+              "experimental"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
