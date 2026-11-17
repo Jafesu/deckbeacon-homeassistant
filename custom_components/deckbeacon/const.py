@@ -46,6 +46,8 @@ CONF_UPD_LOCAL: Final = "updates_local"
 CONF_UPD_REMOTE: Final = "updates_remote"
 CONF_UPDATE_CHANNEL: Final = "update_channel"
 UPDATE_CHANNELS: Final = ("stable", "beta", "dev")
+# Extra address devices may use to reach HA (VPN, reverse proxy), ADR-0011.
+CONF_EXTRA_URL: Final = "extra_device_url"
 
 COMMAND_ACK_TIMEOUT: Final = 15.0
 TERMINAL_STATES: Final = frozenset({"dispatched", "confirmed", "rejected", "failed", "expired", "duplicate", "deferred"})

@@ -262,6 +262,11 @@ class ConnectionSensor(DeckBeaconEntity, SensorEntity):
     def native_value(self) -> str:
         return self.runtime.transport if self.runtime.connected and self.runtime.transport else "offline"
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        # Which address the device is using: internal, external, cloud, ... (ADR-0011).
+        return {"via": self.runtime.via} if self.runtime.connected and self.runtime.via else None
+
 
 class PowerStateSensor(DeckBeaconEntity, SensorEntity):
     """Physical power state as announced by the device, independent of connection."""

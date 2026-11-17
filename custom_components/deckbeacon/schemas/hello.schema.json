@@ -114,6 +114,17 @@
             }
           ],
           "minimum": 0
+        },
+        "via": {
+          "description": "Kind of URL this session uses (protocol 1.6).",
+          "enum": [
+            "internal",
+            "external",
+            "cloud",
+            "manual",
+            "manual_remote",
+            "discovered"
+          ]
         }
       }
     }

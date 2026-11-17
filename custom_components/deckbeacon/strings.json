@@ -236,13 +236,18 @@
           "game_management_remote": "Allow game management (launch) over remote connections",
           "updates_local": "Allow agent updates on the local network",
           "updates_remote": "Allow agent updates remotely (HA Cloud / external URL)",
-          "update_channel": "Agent update channel"
+          "update_channel": "Agent update channel",
+          "extra_device_url": "Extra address for devices (optional)"
         },
         "data_description": {
           "update_channel": "stable: tested releases. beta: early releases. dev: development builds (may be unstable).",
-          "updates_remote": "Updates are signed and verified on the device; each install still needs your approval."
+          "updates_remote": "Updates are signed and verified on the device; each install still needs your approval.",
+          "extra_device_url": "A VPN or reverse-proxy URL your SteamOS devices can use to reach Home Assistant when away, in addition to your internal, external and Home Assistant Cloud URLs."
         }
       }
+    },
+    "error": {
+      "invalid_url": "Enter an http:// or https:// URL without a username or password."
     }
   },
   "services": {

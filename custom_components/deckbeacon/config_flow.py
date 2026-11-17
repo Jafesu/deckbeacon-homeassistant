@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any
+from urllib.parse import urlparse
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
@@ -18,6 +19,7 @@ from homeassistant.core import callback
 from .const import (
     CONF_DEVICE_ID,
     CONF_DEVICE_STATIC,
+    CONF_EXTRA_URL,
     CONF_GM_LOCAL,
     CONF_GM_REMOTE,
     CONF_METRIC_KEYS,
@@ -172,15 +174,29 @@ class DeckBeaconConfigFlow(ConfigFlow, domain=DOMAIN):
             self._finish(False, "user_cancelled")
 
 
+def _valid_device_url(value: str) -> bool:
+    p = urlparse(value)
+    return p.scheme in ("http", "https") and bool(p.hostname) and not p.username and not p.password and not p.query and len(value) <= 512
+
+
 class DeckBeaconOptionsFlow(OptionsFlow):
     """Permission tiers per transport. The agent enforces them too (spec 10)."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        errors: dict[str, str] = {}
         if user_input is not None:
-            return self.async_create_entry(data=user_input)
+            extra = (user_input.get(CONF_EXTRA_URL) or "").strip()
+            if extra and not _valid_device_url(extra):
+                errors[CONF_EXTRA_URL] = "invalid_url"
+            else:
+                data = {k: v for k, v in user_input.items() if k != CONF_EXTRA_URL}
+                if extra:
+                    data[CONF_EXTRA_URL] = extra.rstrip("/")
+                return self.async_create_entry(data=data)
         opts = self.config_entry.options
         return self.async_show_form(
             step_id="init",
+            errors=errors,
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_GM_LOCAL, default=opts.get(CONF_GM_LOCAL, True)): bool,
@@ -188,6 +204,7 @@ class DeckBeaconOptionsFlow(OptionsFlow):
                     vol.Required(CONF_UPD_LOCAL, default=opts.get(CONF_UPD_LOCAL, True)): bool,
                     vol.Required(CONF_UPD_REMOTE, default=opts.get(CONF_UPD_REMOTE, True)): bool,
                     vol.Required(CONF_UPDATE_CHANNEL, default=opts.get(CONF_UPDATE_CHANNEL, "stable")): vol.In(list(UPDATE_CHANNELS)),
+                    vol.Optional(CONF_EXTRA_URL, description={"suggested_value": opts.get(CONF_EXTRA_URL)}): str,
                 }
             ),
         )

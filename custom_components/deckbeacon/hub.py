@@ -35,6 +35,7 @@ from .const import (
     COMMAND_ACK_TIMEOUT,
     CONF_DEVICE_ID,
     CONF_DEVICE_STATIC,
+    CONF_EXTRA_URL,
     CONF_GM_LOCAL,
     CONF_GM_REMOTE,
     CONF_METRIC_KEYS,
@@ -117,6 +118,7 @@ class DeviceRuntime:
         self.hello: dict[str, Any] = {}
         self.channel: Channel | None = None
         self.transport: str | None = None
+        self.via: str | None = None  # URL kind the agent used (protocol 1.6)
         self.last_seen: datetime | None = None
         self.connected_since: datetime | None = None
         self.last_event_seq = 0
@@ -179,6 +181,7 @@ class DeviceRuntime:
         self._set_power("on")  # it is talking to us
         self.expect_drop_at = None
         self.transport = hello["session"]["transport"]
+        self.via = hello["session"].get("via")
         self.connected_since = self.last_seen = datetime.now(UTC)
         self.notify()
 
@@ -372,7 +375,13 @@ class Hub:
             finally:
                 await ch.ws.close(code=CLOSE_REVOKED, message=b"revoked")
 
-    def connection_profile(self, request: web.Request) -> list[dict[str, str]]:
+    def connection_profile(self, request: web.Request, extra: str | None = None, via: str | None = None) -> list[dict[str, str]]:
+        """HA's addresses for devices: internal, external, HA Cloud, plus an
+        owner-set extra URL (VPN / reverse proxy) as manual_remote (ADR-0011).
+
+        The address the device reached us on is always included: HA's
+        configured URLs can be wrong, and a refresh must never drop a path
+        that demonstrably works."""
         urls: list[dict[str, str]] = []
         attempts = (
             ("internal", {"allow_external": False, "allow_cloud": False}),
@@ -386,9 +395,13 @@ class Hub:
                 continue
             if url.startswith(("http://", "https://")) and all(u["url"] != url for u in urls):
                 urls.append({"url": url.rstrip("/"), "kind": kind})
-        if not urls:
-            urls.append({"url": f"{request.scheme}://{request.host}", "kind": "manual"})
-        return urls
+        if extra and extra.startswith(("http://", "https://")) and all(u["url"] != extra.rstrip("/") for u in urls):
+            urls.append({"url": extra.rstrip("/"), "kind": "manual_remote"})
+        here = f"{request.scheme}://{request.host}"
+        if all(u["url"] != here for u in urls):
+            remote = via in ("external", "cloud", "manual_remote")
+            urls.insert(0, {"url": here, "kind": "manual_remote" if remote else "manual"})
+        return urls[:8]
 
     # ---- pre-auth accounting -----------------------------------------------
     def preauth_enter(self, ip: str) -> bool:
@@ -538,7 +551,7 @@ class SessionView(_DeviceView):
                     return ws
                 hub.preauth_leave(ip)
                 authed = True
-                await self._serve(ch, runtime, hello["body"])
+                await self._serve(ch, runtime, hello["body"], request)
             except (ProtocolError, ConnectionResetError) as err:
                 _LOGGER.debug("device session ended: %s", err)
                 if not authed:
@@ -550,8 +563,9 @@ class SessionView(_DeviceView):
             if not authed:
                 hub.preauth_leave(ip)
 
-    async def _serve(self, ch: Channel, runtime: DeviceRuntime, hello: dict[str, Any]) -> None:
+    async def _serve(self, ch: Channel, runtime: DeviceRuntime, hello: dict[str, Any], request: web.Request) -> None:
         await runtime.attach(ch, hello)
+        via = hello["session"].get("via")
         try:
             await ch.send(
                 "welcome",
@@ -565,6 +579,8 @@ class SessionView(_DeviceView):
                         "granted": runtime.granted(hello["session"]["transport"]),
                         "update_channel": runtime.entry.options.get(CONF_UPDATE_CHANNEL, "stable"),
                     },
+                    # Refreshes the device's stored addresses (ADR-0011).
+                    "connection_profile": {"urls": self.hub.connection_profile(request, runtime.entry.options.get(CONF_EXTRA_URL), via)},
                 },
             )
             while True:

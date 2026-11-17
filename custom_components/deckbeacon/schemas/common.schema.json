@@ -109,6 +109,43 @@
       "type": "string",
       "maxLength": 512,
       "pattern": "^(https?|wss?)://[^\\s/?#]+(/[^\\s]*)?$"
+    },
+    "connection_profile": {
+      "type": "object",
+      "required": [
+        "urls"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "urls": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "url": {
+                "$ref": "common.schema.json#/$defs/url"
+              },
+              "kind": {
+                "enum": [
+                  "internal",
+                  "external",
+                  "cloud",
+                  "manual",
+                  "manual_remote"
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

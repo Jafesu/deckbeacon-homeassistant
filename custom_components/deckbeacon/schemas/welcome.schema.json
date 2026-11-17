@@ -67,6 +67,10 @@
           ]
         }
       }
+    },
+    "connection_profile": {
+      "description": "HA's current addresses for the device (protocol 1.6, ADR-0011). Accepted only over the authenticated session; never empties the stored list.",
+      "$ref": "common.schema.json#/$defs/connection_profile"
     }
   }
 }
